@@ -3,15 +3,16 @@ package it.unical.ui.component;
 import it.unical.model.Book;
 
 import javax.swing.*;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.JTableHeader;
+import javax.swing.table.*;
 import java.awt.*;
 import java.util.List;
 
 public class BookTable extends JTable {
     public BookTable(List<Book> books) {
         super(new BookTableModel(books));
+
+        TableRowSorter<TableModel> sorter = new TableRowSorter<>(getModel());
+        setRowSorter(sorter);
 
         setRowHeight(30);
         setFillsViewportHeight(true);
