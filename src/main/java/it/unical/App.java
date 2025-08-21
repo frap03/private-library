@@ -1,10 +1,18 @@
 package it.unical;
 
-/**
- * Hello world!
- */
+import javax.swing.*;
+
 public class App {
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        SwingUtilities.invokeLater(() -> {
+            JFrame frame = new JFrame("Private Library");
+
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+            frame.setResizable(false);
+            frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+
+            frame.setVisible(true);
+        });
     }
 }
