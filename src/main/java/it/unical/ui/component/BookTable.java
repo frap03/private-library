@@ -53,9 +53,14 @@ public class BookTable extends JTable {
             Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             setHorizontalAlignment(SwingConstants.CENTER);
             setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-
             component.setBackground(row % 2 == 0 ? new Color(245, 245, 245) : Color.WHITE);
             component.setForeground(Color.DARK_GRAY);
+
+            if (isSelected) {
+                component.setBackground(new Color(180, 205, 255));
+                component.setForeground(Color.BLACK);
+            }
+
             if (column != 3) return component;
 
             Integer rating = (Integer) value;
