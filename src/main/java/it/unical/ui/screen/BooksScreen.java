@@ -18,7 +18,14 @@ public class BooksScreen extends JPanel {
             () -> System.out.println("Cliccato import libri"),
             () -> System.out.println("Cliccato export libri")
         );
-        JScrollPane bookTable = new JScrollPane(new BookTable(books));
+
+        JScrollPane bookTable = new JScrollPane(
+            new BookTable(
+                books,
+                (row, book) -> System.out.println("#" + row + " " + book)
+            )
+        );
+
         searchPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
 
         add(searchPanel);

@@ -5,10 +5,13 @@ import it.unical.model.Book;
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 public class BookTable extends JTable {
-    public BookTable(List<Book> books) {
+    public BookTable(List<Book> books, BiConsumer<Integer, Book> onBookClick) {
         super(new BookTableModel(books));
 
         TableRowSorter<TableModel> sorter = new TableRowSorter<>(getModel());
@@ -34,6 +37,19 @@ public class BookTable extends JTable {
         getColumnModel().getColumn(1).setPreferredWidth(250); // Title
         getColumnModel().getColumn(2).setPreferredWidth(180); // Author
         getColumnModel().getColumn(3).setPreferredWidth(60);  // Rating
+
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int row = rowAtPoint(e.getPoint());
+
+                if (row >= 0) {
+                    int modelRow = convertRowIndexToModel(row);
+                    Book selectedBook = books.get(modelRow);
+                    onBookClick.accept(row, selectedBook);
+                }
+            }
+        });
     }
 
     @Override

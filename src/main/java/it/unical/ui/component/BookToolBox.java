@@ -7,8 +7,6 @@ import java.util.function.BiConsumer;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import com.formdev.flatlaf.extras.FlatSVGIcon;
-
 public class BookToolBox extends JPanel {
 
     public BookToolBox(
@@ -30,25 +28,7 @@ public class BookToolBox extends JPanel {
         searchPanel.add(searchField, BorderLayout.CENTER);
         searchPanel.add(fieldComboBox, BorderLayout.EAST);
 
-        JButton importButton = createIconButton("icons/import.svg", "Importa file", onImportClick);
-        JButton exportButton = createIconButton("icons/export.svg", "Esporta file", onExportClick);
-        JButton addButton = createIconButton("icons/add.svg", "Aggiungi elemento", onAddClick);
-
-
-        JPanel leftButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
-        leftButtonPanel.setOpaque(false);
-        leftButtonPanel.add(importButton);
-        leftButtonPanel.add(exportButton);
-
-        JPanel rightButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
-        rightButtonPanel.setOpaque(false);
-        rightButtonPanel.add(addButton);
-
-        JPanel bottomPanel = new JPanel(new BorderLayout());
-        bottomPanel.setOpaque(false);
-        bottomPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
-        bottomPanel.add(leftButtonPanel, BorderLayout.WEST);
-        bottomPanel.add(rightButtonPanel, BorderLayout.EAST);
+        JPanel bottomPanel = getBottomPanel(onAddClick, onImportClick, onExportClick);
 
         add(searchPanel, BorderLayout.NORTH);
         add(bottomPanel, BorderLayout.SOUTH);
@@ -68,6 +48,29 @@ public class BookToolBox extends JPanel {
         );
     }
 
+    private static JPanel getBottomPanel(Runnable onAddClick, Runnable onImportClick, Runnable onExportClick) {
+        JButton importButton = new IconButton("icons/import.svg", "Importa file", onImportClick);
+        JButton exportButton = new IconButton("icons/export.svg", "Esporta file", onExportClick);
+        JButton addButton = new IconButton("icons/add.svg", "Aggiungi elemento", onAddClick);
+
+
+        JPanel leftButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        leftButtonPanel.setOpaque(false);
+        leftButtonPanel.add(importButton);
+        leftButtonPanel.add(exportButton);
+
+        JPanel rightButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        rightButtonPanel.setOpaque(false);
+        rightButtonPanel.add(addButton);
+
+        JPanel bottomPanel = new JPanel(new BorderLayout());
+        bottomPanel.setOpaque(false);
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+        bottomPanel.add(leftButtonPanel, BorderLayout.WEST);
+        bottomPanel.add(rightButtonPanel, BorderLayout.EAST);
+        return bottomPanel;
+    }
+
     private JTextField createSearchField() {
         JTextField field = new SearchField();
         field.setPreferredSize(new Dimension(300, 36));
@@ -85,22 +88,4 @@ public class BookToolBox extends JPanel {
         combo.setFocusable(false);
         return combo;
     }
-
-    private JButton createIconButton(String svgPath, String tooltip, Runnable onClick) {
-        FlatSVGIcon icon = new FlatSVGIcon(svgPath, 20, 20);
-        JButton button = new JButton(icon);
-        button.setToolTipText(tooltip);
-        button.setFocusable(false);
-        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        button.setPreferredSize(new Dimension(40, 36));
-        button.addActionListener(e -> onClick.run());
-        button.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1, true));
-        button.setBackground(UIManager.getColor("Component.background"));
-        button.setOpaque(true);
-        button.setContentAreaFilled(true);
-
-        return button;
-    }
-
-
 }
