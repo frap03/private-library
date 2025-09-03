@@ -3,6 +3,7 @@ package it.unical.ui.screen;
 import it.unical.model.Book;
 import it.unical.ui.component.BookToolBox;
 import it.unical.ui.component.BookTable;
+import it.unical.ui.component.UpdateBookDialog;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,7 +15,10 @@ public class BooksScreen extends JPanel {
         BookToolBox searchPanel = new BookToolBox(
             new String[]{"Titolo", "Autore", "ISBN"},
             (field, query) -> {},
-            () -> System.out.println("Cliccato aggungi libro"),
+            () -> {
+                UpdateBookDialog updateBookDialog = UpdateBookDialog.insert(System.out::println);
+                updateBookDialog.setVisible(true);
+            },
             () -> System.out.println("Cliccato import libri"),
             () -> System.out.println("Cliccato export libri")
         );
@@ -22,7 +26,14 @@ public class BooksScreen extends JPanel {
         JScrollPane bookTable = new JScrollPane(
             new BookTable(
                 books,
-                (row, book) -> System.out.println("#" + row + " " + book)
+                (row, book) -> {
+                    UpdateBookDialog dialog = new UpdateBookDialog(
+                            book,
+                            (newBook) -> {},
+                            () -> {}
+                    );
+                    dialog.setVisible(true);
+                }
             )
         );
 

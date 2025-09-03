@@ -12,7 +12,7 @@ public class SearchField extends JTextField {
         Graphics2D g2 = (Graphics2D) g.create();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        if (getText().isEmpty() && !isFocusOwner()) {
+        if (getText().isEmpty()) {
             g2.setColor(Color.GRAY);
             g2.setFont(getFont().deriveFont(Font.ITALIC));
             g2.drawString("Cerca...", 36, getHeight() / 2 + 5);
