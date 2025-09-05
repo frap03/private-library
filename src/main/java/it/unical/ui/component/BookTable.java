@@ -41,13 +41,13 @@ public class BookTable extends JTable {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                int row = rowAtPoint(e.getPoint());
+            int row = rowAtPoint(e.getPoint());
 
-                if (row >= 0) {
-                    int modelRow = convertRowIndexToModel(row);
-                    Book selectedBook = books.get(modelRow);
-                    onBookClick.accept(row, selectedBook);
-                }
+            if (row >= 0) {
+                int modelRow = convertRowIndexToModel(row);
+                Book selectedBook = books.get(modelRow);
+                onBookClick.accept(row, selectedBook);
+            }
             }
         });
     }
