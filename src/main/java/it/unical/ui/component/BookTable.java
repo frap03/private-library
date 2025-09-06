@@ -1,5 +1,6 @@
 package it.unical.ui.component;
 
+import it.unical.BookListener;
 import it.unical.model.Book;
 
 import javax.swing.*;
@@ -7,12 +8,16 @@ import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-public class BookTable extends JTable {
-    public BookTable(List<Book> books, BiConsumer<Integer, Book> onBookClick) {
-        super(new BookTableModel(books));
+public class BookTable extends JTable implements BookListener {
+    private final BookTableModel model;
+
+    public BookTable(BiConsumer<Integer, Book> onBookClick) {
+        model = new BookTableModel(new ArrayList<>());
+        super.setModel(model);
 
         TableRowSorter<TableModel> sorter = new TableRowSorter<>(getModel());
         setRowSorter(sorter);
@@ -45,11 +50,16 @@ public class BookTable extends JTable {
 
             if (row >= 0) {
                 int modelRow = convertRowIndexToModel(row);
-                Book selectedBook = books.get(modelRow);
+                Book selectedBook = model.books.get(modelRow);
                 onBookClick.accept(row, selectedBook);
             }
             }
         });
+    }
+
+    @Override
+    public void update(List<Book> books) {
+        this.model.setBooks(books);
     }
 
     @Override
@@ -92,7 +102,7 @@ public class BookTable extends JTable {
     }
 
     private static class BookTableModel extends AbstractTableModel {
-        private final List<Book> books;
+        private List<Book> books;
         private final String[] columnNames = {"ISBN", "Title", "Author", "Rating"};
 
         public BookTableModel(List<Book> books) {
@@ -119,6 +129,11 @@ public class BookTable extends JTable {
                 case 3 -> book.getRating();
                 default -> null;
             };
+        }
+
+        public void setBooks(List<Book> books) {
+            this.books = books;
+            fireTableDataChanged();
         }
 
         @Override
