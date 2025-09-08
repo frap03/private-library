@@ -23,7 +23,7 @@ public class BooksScreen extends JPanel implements BookListener {
     BookTable table = new BookTable(this::onUpdateClick);
 
     BookToolBox toolBox = new BookToolBox(
-        new String[]{"Titolo", "Autore", "ISBN"},
+        new String[]{"Titolo", "Autore", "ISBN", "Stato Lettura", "Genere", "Valutazione"},
         this::onSearch, this::onAddClick,
         this::onImportClick, this::onExportClick
     );
@@ -40,19 +40,28 @@ public class BooksScreen extends JPanel implements BookListener {
     }
 
     public void onSearch(String field, String query) {
-
+        String lower = query.toLowerCase();
+        switch (field) {
+            case "Titolo" -> publisher.filter(book -> book.getTitle().toLowerCase().contains(lower));
+            case "Autore" -> publisher.filter(book -> book.getAuthor().toLowerCase().contains(lower));
+            case "ISBN" -> publisher.filter(book -> book.getIsbn().contains(query));
+            case "Stato Lettura" -> publisher.filter(book -> book.getStatus().name().equals(query));
+            case "Genere" -> publisher.filter(book -> book.getGenre().name().equals(query));
+            case "Valutazione" -> publisher.filter(book -> book.getRating().toString().contains(query));
+            default -> throw new IllegalArgumentException("Invalid field: " + field);
+        }
     }
 
     public void onAddClick() {
-        UpdateBookDialog updateBookDialog = UpdateBookDialog.insert(System.out::println);
+        UpdateBookDialog updateBookDialog = UpdateBookDialog.insert(publisher::add);
         updateBookDialog.setVisible(true);
     }
 
     public void onUpdateClick(int row, Book book) {
         UpdateBookDialog dialog = new UpdateBookDialog(
             book,
-            (newBook) -> {},
-            () -> {}
+            publisher::add,
+            () -> publisher.remove(book)
         );
         dialog.setVisible(true);
     }
@@ -63,7 +72,7 @@ public class BooksScreen extends JPanel implements BookListener {
         int returnVal = chooser.showOpenDialog(null);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File file = chooser.getSelectedFile();
-            publisher.publish(file);
+            publisher.importFile(file);
             System.out.println(file.getAbsolutePath());
         }
     }

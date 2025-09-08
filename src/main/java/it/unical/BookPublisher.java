@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class BookPublisher {
     private final List<BookListener> subscribers = new ArrayList<>();
@@ -27,17 +28,31 @@ public class BookPublisher {
         subscribers.remove(subscriber);
     }
 
-    public void publish(List<Book> books) {
-        this.books.addAll(books);
-        storage.save(books);
+    public void add(Book book) {
+        this.books.removeIf(b -> b.getIsbn().equals(book.getIsbn()));
+        this.books.add(book);
+        this.storage.save(books);
         notifyListeners();
     }
 
-    public void publish(File file) {
+    public void remove(Book book) {
+        this.books.removeIf(b -> b.getIsbn().equals(book.getIsbn()));
+        this.storage.save(books);
+        notifyListeners();
+    }
+
+    public void filter(Predicate<Book> filter) {
+        notifyListeners(this.books.stream().filter(filter).toList());
+    }
+
+    public void importFile(File file) {
         try {
             String json = Files.readString(file.toPath());
             List<Book> books = gson.fromJson(json, new TypeToken<List<Book>>(){}.getType());
-            publish(books);
+            this.books.clear();
+            this.books.addAll(books);
+            storage.save(books);
+            notifyListeners();
         }
         catch (JsonSyntaxException e) {
             System.err.println("File to import is not valid List<Book>");
@@ -48,7 +63,11 @@ public class BookPublisher {
         }
     }
 
-    public void notifyListeners() {
+    private void notifyListeners() {
+        notifyListeners(books);
+    }
+
+    private void notifyListeners(List<Book> books) {
         for (BookListener subscriber : subscribers) {
             subscriber.update(Collections.unmodifiableList(books));
         }

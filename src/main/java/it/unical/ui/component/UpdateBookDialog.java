@@ -27,7 +27,9 @@ public class UpdateBookDialog extends JDialog {
 
     public UpdateBookDialog(Book book, Consumer<Book> onConfirm, Runnable onDelete) {
         super((Frame) null, true);
-        this.book = book;
+        this.book = book != null ? book :
+            new Book("", "", "", ReadingStatus.NOT_READ, Genre.ADVENTURE, 1);
+
         this.onConfirm = onConfirm;
         this.onDelete = onDelete;
         deleteBtn.setEnabled(this.onDelete != null);
@@ -60,25 +62,26 @@ public class UpdateBookDialog extends JDialog {
         add(formPanel, BorderLayout.CENTER);
         add(getButtonsPanel(), BorderLayout.SOUTH);
         DocumentListener validationListener = new DocumentListener() {
-            @Override public void insertUpdate(DocumentEvent e) { checkValidBook(); }
-            @Override public void removeUpdate(DocumentEvent e) { checkValidBook(); }
-            @Override public void changedUpdate(DocumentEvent e) { checkValidBook(); }
+            @Override public void insertUpdate(DocumentEvent e) { onFormUpdate(); }
+            @Override public void removeUpdate(DocumentEvent e) { onFormUpdate(); }
+            @Override public void changedUpdate(DocumentEvent e) { onFormUpdate(); }
         };
+
+        isbnField.setText(this.book.getIsbn());
+        titleField.setText(this.book.getTitle());
+        authorField.setText(this.book.getAuthor());
+        statusBox.setSelectedItem(this.book.getStatus());
+        genreBox.setSelectedItem(this.book.getGenre());
+        ratingSpinner.setValue(this.book.getRating());
 
         isbnField.getDocument().addDocumentListener(validationListener);
         titleField.getDocument().addDocumentListener(validationListener);
         authorField.getDocument().addDocumentListener(validationListener);
+        statusBox.addActionListener(e -> onFormUpdate());
+        genreBox.addActionListener(e -> onFormUpdate());
+        ratingSpinner.addChangeListener(e -> onFormUpdate());
 
-        if (book != null) {
-            isbnField.setText(book.getIsbn());
-            titleField.setText(book.getTitle());
-            authorField.setText(book.getAuthor());
-            statusBox.setSelectedItem(book.getStatus());
-            genreBox.setSelectedItem(book.getGenre());
-            ratingSpinner.setValue(book.getRating());
-        }
-
-        checkValidBook();
+        onFormUpdate();
         pack();
         setLocationRelativeTo(null);
     }
@@ -109,7 +112,7 @@ public class UpdateBookDialog extends JDialog {
         dispose();
     }
 
-    private void checkValidBook() {
+    private void onFormUpdate() {
         boolean isValid = !isbnField.getText().trim().isEmpty()
             && !titleField.getText().trim().isEmpty()
             && !authorField.getText().trim().isEmpty()
@@ -118,5 +121,13 @@ public class UpdateBookDialog extends JDialog {
             && ratingSpinner.getValue() != null;
 
         confirmBtn.setEnabled(isValid);
+
+        if (!isValid) return;
+        book.setIsbn(isbnField.getText().trim());
+        book.setTitle(titleField.getText().trim());
+        book.setAuthor(authorField.getText().trim());
+        book.setStatus((ReadingStatus) statusBox.getSelectedItem());
+        book.setGenre((Genre) genreBox.getSelectedItem());
+        book.setRating((int) ratingSpinner.getValue());
     }
 }

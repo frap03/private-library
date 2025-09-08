@@ -103,7 +103,7 @@ public class BookTable extends JTable implements BookListener {
 
     private static class BookTableModel extends AbstractTableModel {
         private List<Book> books;
-        private final String[] columnNames = {"ISBN", "Title", "Author", "Rating"};
+        private final String[] columnNames = {"ISBN", "Titolo", "Autore", "Valutazione"};
 
         public BookTableModel(List<Book> books) {
             this.books = books;
